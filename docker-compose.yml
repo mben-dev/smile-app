@@ -1,0 +1,44 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: adonext-monorepo_psql
+    environment:
+      - POSTGRES_USER=$DEFAULT_DB_USER
+      - POSTGRES_PASSWORD=$DEFAULT_DB_PASSWORD
+      - POSTGRES_DB=$DEFAULT_DB_NAME
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer:latest
+    container_name: adonext-monorepo_adminer
+    environment:
+      - ADMINER_DEFAULT_SERVER=$DEFAULT_SERVER
+      - ADMINER_DEFAULT_DB_DRIVER=$DB_DRIVER
+      - ADMINER_DEFAULT_DB_HOST=$DEFAULT_DB_HOST
+      - ADMINER_DEFAULT_DB_NAME=$DEFAULT_DB_NAME
+      - ADMINER_DEFAULT_DB_USER=$DEFAULT_DB_USER
+      - ADMINER_DEFAULT_DB_PASSWORD=$DEFAULT_DB_PASSWORD
+    ports:
+      - "5050:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  mailhog:
+    image: mailhog/mailhog
+    container_name: adonext-monorepo_mailhog
+    restart: unless-stopped
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
+volumes:
+  postgres_data:

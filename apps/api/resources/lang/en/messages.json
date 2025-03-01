@@ -1,0 +1,17 @@
+{
+  "error_validation": "The form contains errors",
+  "unauthorized": "You don't have permission to access this resource",
+  "user_not_found_auth": "The user doesn't exist or the password is incorrect",
+  "token_forgot_existing_user_not_found": "This URL has already been used or is no longer valid",
+  "password_reseted": "Your password has been successfully reset",
+  "forgot_password": {
+    "subject": "Password Reset",
+    "title": "Forgot Password",
+    "preview": "It seems you have forgotten your password.",
+    "hello": "Hello,",
+    "message": "It seems you have forgotten your password. To reset your password, click on the link below:",
+    "link": "Click here",
+    "disclaimer": "If you did not request this change, please ignore this message and your password will not be modified."
+  },
+  "password_updated": "Your password has been successfully updated"
+}

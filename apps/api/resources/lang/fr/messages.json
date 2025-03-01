@@ -1,0 +1,17 @@
+{
+  "error_validation": "Le formulaire contient des erreurs",
+  "unauthorized": "Vous n'avez pas les permissions pour accéder à cette ressource",
+  "user_not_found_auth": "L'utilisateur n'existe pas ou son mot de passe est incorrect",
+  "token_forgot_existing_user_not_found": "Cette url a déjà utilisé ou n'est plus valide",
+  "password_reseted": "Votre mot de passe a été réinitialisé avec succès",
+  "forgot_password": {
+    "subject": "Réinitialisation de mot de passe",
+    "title": "Mot de passe oublié",
+    "preview": "Il semblerait que vous ayez oublié votre mot de passe.",
+    "hello": "Bonjour,",
+    "message": "Il semblerait que vous ayez oublié votre mot de passe. Pour réinitialiser votre mot de passe, cliquez sur le lien ci-dessous :",
+    "link": "Cliquez ici",
+    "disclaimer": "Si vous n'êtes pas à l'origine de cette demande, ignorez ce message et votre mot de passe ne sera pas modifié."
+  },
+  "password_updated": "Votre mot de passe a été mis à jour avec succès"
+}

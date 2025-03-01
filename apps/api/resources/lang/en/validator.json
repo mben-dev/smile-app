@@ -1,0 +1,18 @@
+{
+  "shared": {
+    "fields": {
+      "password": "password",
+      "email": "email",
+      "token": "token",
+      "password_confirmation": "password confirmation",
+      "name": "name"
+    },
+    "messages": {
+      "required": "{field} is required",
+      "email": "email is invalid",
+      "password.sameAs": "password must be identical to ",
+      "password_confirmation.sameAs": "password confirmation must be identical to password",
+      "database.unique": "{field} is already in use"
+    }
+  }
+}

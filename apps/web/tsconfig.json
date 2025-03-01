@@ -15,5 +15,8 @@
     "next.config.js",
     ".next/types/**/*.ts"
   ],
+  "paths": {
+    "@/*": ["./*"]
+  },
   "exclude": ["node_modules"]
 }

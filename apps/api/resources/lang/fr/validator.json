@@ -1,0 +1,18 @@
+{
+  "shared": {
+    "fields": {
+      "password": "mot de passe",
+      "email": "l'email",
+      "token": "le jeton",
+      "password_confirmation": "la confirmation du mot de passe",
+      "name": "le nom"
+    },
+    "messages": {
+      "required": "{field} est requis",
+      "email": "l'email est invalide",
+      "password.sameAs": "le mot de passe doit être identique à ",
+      "password_confirmation.sameAs": "la confirmation du mot de passe doit être identique au mot de passe",
+      "database.unique": "{field} est déjà utilisé"
+    }
+  }
+}

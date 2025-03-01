@@ -29,11 +29,10 @@
     "#database/*": "./database/*.js",
     "#start/*": "./start/*.js",
     "#tests/*": "./tests/*.js",
-    "#config/*": "./config/*.js"
+    "#config/*": "./config/*.js",
+    "#templates/*": "./resources/templates/*.js"
   },
   "devDependencies": {
-    "@repo/eslint-config": "workspace:*",
-    "@repo/typescript-config": "workspace:*",
     "@adonisjs/assembler": "^7.8.2",
     "@adonisjs/eslint-config": "^2.0.0",
     "@adonisjs/prettier-config": "^1.4.0",
@@ -42,9 +41,13 @@
     "@japa/assert": "^4.0.1",
     "@japa/plugin-adonisjs": "^4.0.0",
     "@japa/runner": "^4.2.0",
+    "@repo/eslint-config": "workspace:*",
+    "@repo/typescript-config": "workspace:*",
     "@swc/core": "1.10.7",
     "@types/luxon": "^3.4.2",
     "@types/node": "^22.13.2",
+    "@types/react": "19.0.8",
+    "@types/react-dom": "19.0.3",
     "eslint": "^9.20.1",
     "hot-hook": "^0.4.0",
     "pino-pretty": "^13.0.0",
@@ -53,14 +56,21 @@
     "typescript": "~5.7"
   },
   "dependencies": {
-    "@repo/types": "workspace:*",
     "@adonisjs/auth": "^9.3.1",
     "@adonisjs/core": "^6.17.2",
     "@adonisjs/cors": "^2.2.1",
+    "@adonisjs/i18n": "^2.2.0",
     "@adonisjs/lucid": "^21.6.0",
+    "@adonisjs/mail": "^9.2.2",
+    "@react-email/components": "^0.0.33",
+    "@react-email/render": "^1.0.5",
+    "@repo/types": "workspace:*",
     "@vinejs/vine": "^3.0.0",
     "luxon": "^3.5.0",
     "pg": "^8.13.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-email": "^3.0.7",
     "reflect-metadata": "^0.2.2"
   },
   "hotHook": {
