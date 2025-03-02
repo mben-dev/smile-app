@@ -71,7 +71,7 @@ ENV NODE_ENV=production
 COPY --from=builder --chown=nextjs:nodejs /app .
 WORKDIR /app/apps/${APP_DIRNAME}
 
-ARG PORT=3001
+ARG PORT=3000
 ENV PORT=${PORT}
 EXPOSE ${PORT}
 
