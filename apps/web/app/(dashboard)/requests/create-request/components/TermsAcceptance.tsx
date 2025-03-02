@@ -1,5 +1,7 @@
+import { Alert, AlertDescription, AlertTitle } from "components/ui/alert";
 import { Checkbox } from "components/ui/checkbox";
 import { Label } from "components/ui/label";
+import { InfoIcon } from "lucide-react";
 
 interface TermsData {
   termsAccepted: boolean;
@@ -17,6 +19,40 @@ export function TermsAcceptance({ data, setData }: TermsAcceptanceProps) {
 
   return (
     <div className="space-y-6">
+      <Alert className="mb-6">
+        <InfoIcon className="h-4 w-4" />
+        <AlertTitle>Informations importantes</AlertTitle>
+        <AlertDescription className="text-sm mt-2">
+          <p className="mb-2">
+            Pour optimiser la précision et l&apos;efficacité de votre plan de
+            traitement, vous avez la possibilité de fournir des fichiers
+            complémentaires (radiographies dentaires, photos intra-orales et
+            faciales) ainsi que d&apos;indiquer vos préférences concernant le
+            type de plan de traitement souhaité et toute prescription
+            spécifique.
+          </p>
+          <p className="mb-2">
+            Bien que facultatives, ces informations sont vivement recommandées.
+            Les fichiers complémentaires permettent d&apos;affiner
+            l&apos;analyse de votre situation dentaire, réduisant ainsi les
+            imprécisions potentielles des scans numériques. De même, une
+            prescription détaillée facilite l&apos;adaptation du traitement à
+            vos attentes et besoins cliniques.
+          </p>
+          <p className="mb-2">
+            En l&apos;absence de ces éléments, le plan de traitement sera
+            élaboré uniquement sur la base des données disponibles. Le
+            technicien se réserve alors le droit de définir le traitement selon
+            son expertise et son évaluation professionnelle.
+          </p>
+          <p>
+            En validant votre demande sans fournir ces informations, vous
+            acceptez que le technicien prenne les décisions nécessaires pour
+            optimiser votre traitement.
+          </p>
+        </AlertDescription>
+      </Alert>
+
       <div className="text-sm text-gray-500 dark:text-gray-400">
         <p className="mb-4">
           En acceptant ces conditions, vous reconnaissez que :

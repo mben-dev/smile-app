@@ -188,80 +188,79 @@ export default class RequestsController {
    * Upload files for a request
    */
   async uploadFiles({ params, request, auth, response }: HttpContext) {
-    const user = auth.user!
-    const req = await Request.find(params.id)
+    try {
+      const user = auth.user!
+      const requestId = params.id
+      const requestRecord = await Request.query().where('id', requestId).first()
 
-    if (!req) {
-      return response.notFound({ message: 'Request not found' })
-    }
+      if (!requestRecord) {
+        return response.notFound({ message: 'Request not found' })
+      }
 
-    // Check if the user is authorized to upload files for this request
-    if (!user.isAdmin && req.userId !== user.id) {
-      return response.forbidden({
-        message: 'You are not authorized to upload files for this request',
-      })
-    }
+      // Vérifier que l'utilisateur est le propriétaire de la demande ou un admin
+      if (requestRecord.userId !== user.id && !user.isAdmin) {
+        return response.forbidden({
+          message: 'You are not authorized to upload files to this request',
+        })
+      }
 
-    // Only allow uploads if the request is in certain statuses
-    if (req.status !== 'await_information' && req.status !== 'ask_change' && !user.isAdmin) {
-      return response.forbidden({
-        message: 'Files cannot be uploaded for this request in its current status',
-      })
-    }
+      // Traiter les fichiers téléchargés
+      const files = request.allFiles()
 
-    // Handle file uploads
-    const fileTypes = ['radiography', 'photos', 'scan', 'stl'] as const
-    const uploadedFiles = []
+      if (Object.keys(files).length === 0) {
+        return response.badRequest({ message: 'No files uploaded' })
+      }
 
-    for (const fileType of fileTypes) {
-      const file = request.file(fileType)
+      // Créer un dossier pour les fichiers de cette demande
+      const uploadDir = `uploads/requests/${requestId}`
 
-      if (file) {
-        // Check file size and extension
-        const allowedExtnames = ['jpg', 'jpeg', 'png', 'pdf', 'stl', 'zip']
+      // Traiter chaque fichier
+      for (const [key, file] of Object.entries(files)) {
+        // S'assurer que file est un MultipartFile et non un tableau
+        if (Array.isArray(file)) continue
 
-        if (!file.extname || !allowedExtnames.includes(file.extname)) {
-          return response.badRequest({
-            message: `Invalid file extension for ${fileType}. Allowed: ${allowedExtnames.join(', ')}`,
-          })
+        // Extraire le type de fichier (radiography, photos, scan) et l'index du nom de la clé
+        const [fileType] = key.split('_')
+
+        // Vérifier que le type de fichier est valide
+        if (!['radiography', 'photos', 'scan'].includes(fileType)) {
+          continue
         }
 
-        // Generate a unique filename
-        const fileName = `${req.id}/${fileType}/${cuid()}.${file.extname}`
+        // Générer un nom de fichier unique
+        const fileName = `${fileType}_${Date.now()}_${file.clientName}`
 
-        // Move the file to the storage
-        await file.moveToDisk(fileName)
+        // Spécifier le chemin complet pour le stockage
+        const storagePath = `requests/${requestId}/${fileName}`
 
-        // Get the URL of the uploaded file
-        const url = await drive.use().getUrl(fileName)
+        // Déplacer le fichier vers le stockage
+        await file.moveToDisk(storagePath)
 
-        // Save file information to the database
-        const requestFile = await RequestFile.create({
-          requestId: req.id,
+        // Obtenir l'URL du fichier téléchargé
+        const url = await drive.use().getUrl(storagePath)
+
+        // Créer un enregistrement pour le fichier dans la base de données
+        await RequestFile.create({
+          requestId,
           fileName: file.clientName,
-          filePath: fileName,
-          fileType: fileType,
+          filePath: storagePath,
+          fileType: fileType as 'radiography' | 'photos' | 'scan',
           fileSize: file.size,
-          mimeType: file.type || `application/${file.extname}`,
+          mimeType: file.type || 'application/octet-stream',
           url: url,
         })
-
-        uploadedFiles.push(requestFile)
       }
-    }
 
-    // If files were uploaded and the request is in 'await_information' status,
-    // update the status to 'in_progress'
-    if (uploadedFiles.length > 0 && req.status === 'await_information') {
-      req.status = 'in_progress'
-      await req.save()
-    }
+      // Mettre à jour le statut de la demande si nécessaire
+      if (requestRecord.status === 'await_information') {
+        await requestRecord.merge({ status: 'in_progress' }).save()
+      }
 
-    return response.ok({
-      message: 'Files uploaded successfully',
-      files: uploadedFiles,
-      request: req,
-    })
+      return response.ok({ message: 'Files uploaded successfully' })
+    } catch (error) {
+      console.error('Error uploading files:', error)
+      return response.internalServerError({ message: 'Error uploading files', error })
+    }
   }
 
   /**

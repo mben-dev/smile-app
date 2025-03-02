@@ -33,7 +33,7 @@ function RequestForm() {
     treatmentType: "",
     notes: "",
     termsAccepted: false,
-    files: {} as Record<string, File | null>,
+    files: {} as Record<string, File[] | null>,
   });
   const [step, setStep] = useState(stepParam ? parseInt(stepParam) : 0);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -70,7 +70,7 @@ function RequestForm() {
 
   const updateFileData = (
     partialData: Partial<{
-      files: Record<string, File | null>;
+      files: Record<string, File[] | null>;
     }>
   ) => {
     setData((prevData) => ({
@@ -130,16 +130,18 @@ function RequestForm() {
             treatmentType: requestData.treatmentType || "",
             notes: requestData.notes || "",
             termsAccepted: requestData.termsAccepted || false,
-            files: {} as Record<string, File | null>,
+            files: {} as Record<string, File[] | null>,
           });
 
           // Si des fichiers sont déjà présents, les marquer comme téléchargés
           if (requestData.files && requestData.files.length > 0) {
-            const filesMap = {} as Record<string, File | null>;
+            const filesMap = {} as Record<string, File[] | null>;
             requestData.files.forEach((file: any) => {
               // Marquer le type de fichier comme "déjà téléchargé"
               // Nous ne pouvons pas récupérer le File original, mais nous pouvons marquer qu'il existe
-              filesMap[file.fileType] = null;
+              if (!filesMap[file.fileType]) {
+                filesMap[file.fileType] = null;
+              }
             });
             setData((prev) => ({ ...prev, files: filesMap }));
           }
@@ -236,15 +238,13 @@ function RequestForm() {
       }
     } else if (step === 2) {
       // Validation des fichiers
-      const requiredFileTypes = ["radiography", "photos", "scan"];
+      const requiredFileTypes = ["scan"];
       const missingFiles = requiredFileTypes.filter(
         (type) => !data.files[type]
       );
 
       if (missingFiles.length > 0) {
-        toast.error(
-          `Veuillez télécharger tous les fichiers requis: ${missingFiles.join(", ")}`
-        );
+        toast.error(`Veuillez télécharger le scan qui est obligatoire`);
         return;
       }
 
@@ -253,9 +253,11 @@ function RequestForm() {
         setIsSubmitting(true);
         try {
           const formData = new FormData();
-          Object.entries(data.files).forEach(([key, file]) => {
-            if (file) {
-              formData.append(key, file);
+          Object.entries(data.files).forEach(([key, files]) => {
+            if (files && files.length > 0) {
+              files.forEach((file, index) => {
+                formData.append(`${key}_${index}`, file);
+              });
             }
           });
 
