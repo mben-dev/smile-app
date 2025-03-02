@@ -15,5 +15,5 @@ services:
       dockerfile: ./apps/api/Dockerfile
     ports:
       - 3333:3333
-    env_file:
-      - ./apps/api/.env
+    # env_file:
+    #   - ./apps/api/.env

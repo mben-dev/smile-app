@@ -2,9 +2,9 @@ import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
 
 // Define which routes are protected and require authentication
-const protectedRoutes = ["/dashboard", "/profile", "/settings"];
+const protectedRoutes = ["/requests", "/profile", "/settings"];
 // Define which routes are public for authenticated users
-const authRoutes = ["/login", "/register", "/forgot-password"];
+const authRoutes = ["/auth/login", "/auth/register", "/auth/forgot-password"];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
@@ -16,7 +16,7 @@ export function middleware(request: NextRequest) {
     protectedRoutes.some((route) => pathname.startsWith(route)) &&
     !isAuthenticated
   ) {
-    const url = new URL("/login", request.url);
+    const url = new URL("/auth/login", request.url);
     url.searchParams.set("from", pathname);
     return NextResponse.redirect(url);
   }
@@ -26,7 +26,7 @@ export function middleware(request: NextRequest) {
     authRoutes.some((route) => pathname.startsWith(route)) &&
     isAuthenticated
   ) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/requests", request.url));
   }
 
   return NextResponse.next();

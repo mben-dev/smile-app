@@ -42,7 +42,7 @@ export function ResetPasswordForm({
               "Content-Type": "application/json",
             },
             body: JSON.stringify({ token }),
-          }
+          },
         );
 
         setIsTokenValid(response.ok);
@@ -87,7 +87,7 @@ export function ResetPasswordForm({
             password,
             password_confirmation: confirmPassword,
           }),
-        }
+        },
       );
 
       const data = await response.json();

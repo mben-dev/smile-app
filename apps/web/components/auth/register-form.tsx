@@ -51,7 +51,7 @@ export function RegisterForm({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ fullName, email, password }),
-        }
+        },
       );
 
       const data = await response.json();
@@ -61,7 +61,7 @@ export function RegisterForm({
       }
 
       // Redirect to login page after successful registration
-      router.push("/login?registered=true");
+      router.push("/auth/login?registered=true");
     } catch (error: unknown) {
       const errorMessage =
         error instanceof Error

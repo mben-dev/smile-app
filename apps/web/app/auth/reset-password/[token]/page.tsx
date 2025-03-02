@@ -1,16 +1,26 @@
+"use client";
+
 import { ResetPasswordForm } from "components/auth/reset-password-form";
+import { useParams } from "next/navigation";
+import { Suspense } from "react";
 
-export const metadata = {
-  title: "Reset Password",
-  description: "Reset your password",
-};
+function ResetPasswordContent() {
+  const params = useParams();
+  const token = params.token as string;
 
-interface ResetPasswordPageProps {
-  params: {
-    token: string;
-  };
+  return <ResetPasswordForm token={token} />;
 }
 
-export default function ResetPasswordPage({ params }: ResetPasswordPageProps) {
-  return <ResetPasswordForm token={params.token} />;
+export default function ResetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <div className="flex justify-center items-center min-h-screen">
+          Chargement...
+        </div>
+      }
+    >
+      <ResetPasswordContent />
+    </Suspense>
+  );
 }

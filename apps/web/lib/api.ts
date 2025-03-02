@@ -21,7 +21,7 @@ api.interceptors.request.use(
   },
   (error) => {
     return Promise.reject(error);
-  }
+  },
 );
 
 // Add a response interceptor to handle auth errors
@@ -37,12 +37,12 @@ api.interceptors.response.use(
 
       // If we're in the browser, redirect to login
       if (typeof window !== "undefined") {
-        window.location.href = "/login";
+        window.location.href = "/auth/login";
       }
     }
 
     return Promise.reject(error);
-  }
+  },
 );
 
 export default api;

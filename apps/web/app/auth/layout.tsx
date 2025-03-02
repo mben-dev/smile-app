@@ -16,7 +16,7 @@ export default function LayoutAuth({
               <GalleryVerticalEnd className="size-4" />
             </div> */}
             <Image
-              src={process.env.NEXT_PUBLIC_LOGO_URL}
+              src={process.env.NEXT_PUBLIC_LOGO_URL!}
               alt="logo"
               width={140}
               height={60}

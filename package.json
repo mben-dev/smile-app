@@ -1,5 +1,5 @@
 {
-  "name": "adonext-monorepo",
+  "name": "smile-app",
   "private": true,
   "scripts": {
     "build": "turbo run build",

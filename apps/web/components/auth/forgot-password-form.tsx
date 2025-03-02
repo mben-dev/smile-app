@@ -26,7 +26,7 @@ export function ForgotPasswordForm({
 }: ForgotPasswordFormProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(
-    showError ? "The reset link is invalid or has expired." : null
+    showError ? "The reset link is invalid or has expired." : null,
   );
   const [success, setSuccess] = useState(false);
   const formRef = useRef<HTMLFormElement>(null);
@@ -50,7 +50,7 @@ export function ForgotPasswordForm({
             "Content-Type": "application/json",
           },
           body: JSON.stringify({ email }),
-        }
+        },
       );
 
       const data = await response.json();

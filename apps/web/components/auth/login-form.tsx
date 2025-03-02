@@ -14,19 +14,27 @@ import { Label } from "components/ui/label";
 import { cn } from "lib/utils";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export function LoginForm({
   className,
   ...props
 }: React.ComponentPropsWithoutRef<"div">) {
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, authState } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Effet pour rediriger si déjà authentifié
+  useEffect(() => {
+    if (authState.isAuthenticated && !authState.isLoading) {
+      console.log("User is authenticated, redirecting to requests");
+      router.push("/requests");
+    }
+  }, [authState.isAuthenticated, authState.isLoading, router]);
+
   const handleClientSubmit = async (
-    event: React.FormEvent<HTMLFormElement>
+    event: React.FormEvent<HTMLFormElement>,
   ) => {
     event.preventDefault();
     setIsLoading(true);
@@ -37,10 +45,18 @@ export function LoginForm({
     const password = formData.get("password") as string;
 
     try {
+      console.log("Attempting login...");
       // Client-side login using React Query
       await login(email, password);
-      router.push("/dashboard");
+      console.log("Login successful, waiting for auth state update");
+
+      // Forcer une redirection après un court délai
+      setTimeout(() => {
+        console.log("Forcing redirect to dashboard");
+        window.location.href = "/requests";
+      }, 500);
     } catch (error: unknown) {
+      console.error("Login error:", error);
       const errorMessage =
         error instanceof Error
           ? error.message

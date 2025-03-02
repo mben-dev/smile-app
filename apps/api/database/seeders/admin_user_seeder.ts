@@ -2,7 +2,7 @@ import User from '#models/user'
 import env from '#start/env'
 import { BaseSeeder } from '@adonisjs/lucid/seeders'
 
-export default class extends BaseSeeder {
+export default class AdminUserSeeder extends BaseSeeder {
   async run() {
     const email = env.get('ADMIN_EMAIL')
 
@@ -14,10 +14,10 @@ export default class extends BaseSeeder {
 
     await User.create({
       email,
-      fullName: 'admin',
-      password: env.get('ADMIN_PASSWORD'),
-      isAdmin: true,
+      fullName: 'Admin User',
+      password: 'admin123', // À changer en production
       isActive: true,
+      isAdmin: true,
     })
 
     console.log('admin created')

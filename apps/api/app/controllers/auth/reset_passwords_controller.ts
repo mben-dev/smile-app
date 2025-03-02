@@ -56,6 +56,9 @@ export default class ResetPasswordsController {
     }
 
     const user = await User.findOrFail(existingToken.tokenableId)
+    if (!user.isActive) {
+      user.isActive = true
+    }
     user.password = password
     await user.save()
 

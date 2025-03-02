@@ -16,7 +16,10 @@
     ".next/types/**/*.ts"
   ],
   "paths": {
-    "@/*": ["./*"]
+    "@/*": ["./*"],
+    "@/components/*": ["./components/*"],
+    "@/lib/*": ["./lib/*"],
+    "@/hooks/*": ["./hooks/*"]
   },
   "exclude": ["node_modules"]
 }
