@@ -13,6 +13,21 @@ import vine from '@vinejs/vine'
 
 export default class RequestsController {
   /**
+   * Helper function to refresh signed URLs for files in production
+   */
+  private async refreshSignedUrls(requests: Request[]): Promise<void> {
+    if (process.env.NODE_ENV !== 'production') return
+
+    for (const request of requests) {
+      if (!request.files || request.files.length === 0) continue
+
+      for (const file of request.files) {
+        file.url = await file.getSignedUrl('24h')
+      }
+    }
+  }
+
+  /**
    * Display a list of requests for the authenticated user
    */
   async index({ auth, request, response }: HttpContext) {
@@ -56,9 +71,14 @@ export default class RequestsController {
 
     if (user.isAdmin) {
       // Pour les admins, charger les données de l'utilisateur avec chaque demande
-      requests = await query.preload('user', (userQuery) => {
-        userQuery.select('id', 'fullName', 'email')
-      })
+      requests = await query
+        .preload('user', (userQuery) => {
+          userQuery.select('id', 'fullName', 'email')
+        })
+        .preload('files')
+
+      // En production, générer des URLs signées pour tous les fichiers
+      await this.refreshSignedUrls(requests)
 
       // Transformer les résultats pour inclure les informations de l'utilisateur directement
       requests = requests.map((req) => {
@@ -71,7 +91,10 @@ export default class RequestsController {
       })
     } else {
       // Pour les utilisateurs normaux, juste leurs propres demandes
-      requests = await query
+      requests = await query.preload('files')
+
+      // En production, générer des URLs signées pour tous les fichiers
+      await this.refreshSignedUrls(requests)
     }
 
     return response.ok(requests)
@@ -95,6 +118,13 @@ export default class RequestsController {
 
     // Load files associated with the request
     await request.load('files')
+
+    // En production, générer des URLs signées pour tous les fichiers
+    if (process.env.NODE_ENV === 'production' && request.files.length > 0) {
+      for (const file of request.files) {
+        file.url = await file.getSignedUrl('24h')
+      }
+    }
 
     // Si l'utilisateur est admin, charger les informations de l'utilisateur
     if (user.isAdmin) {
@@ -444,6 +474,7 @@ export default class RequestsController {
     }
 
     try {
+      // Toujours utiliser des URLs signées pour le téléchargement des fichiers STL
       const signedUrl = await drive.use().getSignedUrl(stlFile.filePath, {
         expiresIn: '1h', // URL expires in 1 hour
       })

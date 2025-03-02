@@ -1,3 +1,4 @@
+import drive from '@adonisjs/drive/services/main'
 import { BaseModel, belongsTo, column } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import { DateTime } from 'luxon'
@@ -36,4 +37,13 @@ export default class RequestFile extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
+
+  /**
+   * Generate a signed URL for this file
+   * @param expiresIn Duration for which the URL is valid (e.g., '1h', '24h')
+   * @returns Promise with the signed URL
+   */
+  async getSignedUrl(expiresIn: string = '24h'): Promise<string> {
+    return await drive.use().getSignedUrl(this.filePath, { expiresIn })
+  }
 }

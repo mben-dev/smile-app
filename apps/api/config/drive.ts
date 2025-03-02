@@ -22,7 +22,7 @@ const driveConfig = defineConfig({
         accessKeyId: env.get('S3_ACCESS_KEY_ID')!,
         secretAccessKey: env.get('S3_SECRET_ACCESS_KEY')!,
       },
-      region: env.get('S3_REGION'),
+      region: 'auto',
       bucket: env.get('S3_BUCKET')!,
       endpoint: env.get('S3_ENDPOINT'),
       visibility: 'private',
