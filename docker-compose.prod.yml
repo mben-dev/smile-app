@@ -6,6 +6,9 @@ services:
     build:
       context: .
       dockerfile: ./apps/web/Dockerfile
+      args:
+        NEXT_PUBLIC_API_URL: "https://smile-api.mbn.dev"
+        NEXT_PUBLIC_LOGO_URL: "https://img.logoipsum.com/244.svg"
     ports:
       - 3001:3001
     environment:
