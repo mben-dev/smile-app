@@ -1,5 +1,6 @@
 import Request from '#models/request'
 import RequestFile from '#models/request_file'
+
 import {
   createRequestValidator,
   updateRequestStatusValidator,
@@ -224,28 +225,30 @@ export default class RequestsController {
           continue
         }
 
-        // Générer un nom de fichier unique
-        const fileName = `${fileType}_${Date.now()}_${file.clientName}`
+        try {
+          // Générer un nom de fichier unique avec le chemin
+          const storagePath = `requests/${requestId}/${fileType}_${Date.now()}_${file.clientName}`
 
-        // Spécifier le chemin complet pour le stockage
-        const storagePath = `requests/${requestId}/${fileName}`
+          // Utiliser la méthode moveToDisk de MultipartFile qui est ajoutée par Drive
+          await file.moveToDisk(storagePath)
 
-        // Déplacer le fichier vers le stockage
-        await file.moveToDisk(storagePath)
+          // Obtenir l'URL du fichier téléchargé
+          const url = await drive.use().getUrl(storagePath)
 
-        // Obtenir l'URL du fichier téléchargé
-        const url = await drive.use().getUrl(storagePath)
-
-        // Créer un enregistrement pour le fichier dans la base de données
-        await RequestFile.create({
-          requestId,
-          fileName: file.clientName,
-          filePath: storagePath,
-          fileType: fileType as 'radiography' | 'photos' | 'scan',
-          fileSize: file.size,
-          mimeType: file.type || 'application/octet-stream',
-          url: url,
-        })
+          // Créer un enregistrement pour le fichier dans la base de données
+          await RequestFile.create({
+            requestId,
+            fileName: file.clientName,
+            filePath: storagePath,
+            fileType: fileType as 'radiography' | 'photos' | 'scan',
+            fileSize: file.size,
+            mimeType: file.type || 'application/octet-stream',
+            url: url,
+          })
+        } catch (fileError) {
+          console.error(`Error uploading file ${file.clientName}:`, fileError)
+          // Continuer avec les autres fichiers même si celui-ci échoue
+        }
       }
 
       // Mettre à jour le statut de la demande si nécessaire
@@ -306,34 +309,42 @@ export default class RequestsController {
     }
 
     // Generate a unique filename
-    const fileName = `${req.id}/final/${cuid()}.${fileExtension}`
+    const fileName = `requests/${req.id}/final/${cuid()}.${fileExtension}`
 
-    // Move the file to the storage
-    await stlFile.moveToDisk(fileName)
+    try {
+      // Move the file to the storage using the correct Drive API
+      await stlFile.moveToDisk(fileName)
 
-    // Get the URL of the uploaded file
-    const url = await drive.use().getUrl(fileName)
+      // Get the URL of the uploaded file
+      const url = await drive.use().getUrl(fileName)
 
-    // Save file information to the database
-    const requestFile = await RequestFile.create({
-      requestId: req.id,
-      fileName: stlFile.clientName,
-      filePath: fileName,
-      fileType: 'final',
-      fileSize: stlFile.size,
-      mimeType: stlFile.type || `application/${fileExtension}`,
-      url: url,
-    })
+      // Save file information to the database
+      const requestFile = await RequestFile.create({
+        requestId: req.id,
+        fileName: stlFile.clientName,
+        filePath: fileName,
+        fileType: 'final',
+        fileSize: stlFile.size,
+        mimeType: stlFile.type || `application/${fileExtension}`,
+        url: url,
+      })
 
-    // Update the request status to 'to_validate'
-    req.status = 'to_validate'
-    await req.save()
+      // Update the request status to 'to_validate'
+      req.status = 'to_validate'
+      await req.save()
 
-    return response.ok({
-      message: 'Final STL file uploaded successfully',
-      file: requestFile,
-      request: req,
-    })
+      return response.ok({
+        message: 'Final STL file uploaded successfully',
+        file: requestFile,
+        request: req,
+      })
+    } catch (error) {
+      console.error('Error uploading final STL file:', error)
+      return response.internalServerError({
+        message: 'Error uploading final STL file',
+        error,
+      })
+    }
   }
 
   /**
