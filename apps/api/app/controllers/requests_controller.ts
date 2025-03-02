@@ -211,9 +211,6 @@ export default class RequestsController {
         return response.badRequest({ message: 'No files uploaded' })
       }
 
-      // Créer un dossier pour les fichiers de cette demande
-      const uploadDir = `uploads/requests/${requestId}`
-
       // Traiter chaque fichier
       for (const [key, file] of Object.entries(files)) {
         // S'assurer que file est un MultipartFile et non un tableau
