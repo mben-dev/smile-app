@@ -227,7 +227,9 @@ export default class RequestsController {
 
         try {
           // Générer un nom de fichier unique avec le chemin
-          const storagePath = `requests/${requestId}/${fileType}_${Date.now()}_${file.clientName}`
+          // Nettoyer le nom du fichier pour éviter les caractères non autorisés dans S3
+          const cleanFileName = file.clientName.replace(/[()[\]{}]/g, '').replace(/\s+/g, '_')
+          const storagePath = `requests/${requestId}/${fileType}_${Date.now()}_${cleanFileName}`
 
           // Utiliser la méthode moveToDisk de MultipartFile qui est ajoutée par Drive
           await file.moveToDisk(storagePath)
@@ -309,7 +311,9 @@ export default class RequestsController {
     }
 
     // Generate a unique filename
-    const fileName = `requests/${req.id}/final/${cuid()}.${fileExtension}`
+    // Clean the file name to avoid disallowed characters in S3
+    const cleanFileName = stlFile.clientName.replace(/[()[\]{}]/g, '').replace(/\s+/g, '_')
+    const fileName = `requests/${req.id}/final/${cuid()}_${cleanFileName}`
 
     try {
       // Move the file to the storage using the correct Drive API
