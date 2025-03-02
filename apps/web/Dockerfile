@@ -72,6 +72,8 @@ COPY --from=builder --chown=nextjs:nodejs /app .
 WORKDIR /app/apps/${APP_DIRNAME}
 
 ARG PORT=3001
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_LOGO_URL
 ENV PORT=${PORT}
 EXPOSE ${PORT}
 
