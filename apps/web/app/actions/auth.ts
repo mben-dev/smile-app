@@ -4,11 +4,11 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { LoginResponse, User } from "../../types/auth";
 
-const API_URL = process.env.API_URL || "http://localhost:3333";
+const API_URL = process.env.NEXT_PUBLIC_API_URL;
 const AUTH_TOKEN_KEY = "auth_token";
 
 export async function loginAction(
-  formData: FormData,
+  formData: FormData
 ): Promise<{ success: boolean; error?: string }> {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
