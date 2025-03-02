@@ -7,7 +7,7 @@ services:
       context: .
       dockerfile: ./apps/web/Dockerfile
     ports:
-      - 3001:3001
+      - 3334:3334
   api:
     container_name: api
     build:
