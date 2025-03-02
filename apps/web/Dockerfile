@@ -2,6 +2,7 @@ ARG NODE_VERSION=20
 ARG APP_DIRNAME=web
 ARG PROJECT=web
 
+
 # 1. Alpine image
 FROM node:${NODE_VERSION}-alpine AS alpine
 RUN apk update
@@ -36,9 +37,14 @@ RUN turbo prune --scope=${PROJECT} --docker
 # 3. Build the project
 FROM base AS builder
 ARG PROJECT
+ARG NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_LOGO_URL
 
+ENV NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL}
+ENV NEXT_PUBLIC_LOGO_URL=${NEXT_PUBLIC_LOGO_URL}
 # Environment to skip .env validation on build
 ENV CI=true
+
 
 WORKDIR /app
 
@@ -72,8 +78,6 @@ COPY --from=builder --chown=nextjs:nodejs /app .
 WORKDIR /app/apps/${APP_DIRNAME}
 
 ARG PORT=3001
-ARG NEXT_PUBLIC_API_URL
-ARG NEXT_PUBLIC_LOGO_URL
 ENV PORT=${PORT}
 EXPOSE ${PORT}
 
