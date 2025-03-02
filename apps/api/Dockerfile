@@ -76,7 +76,7 @@ WORKDIR /app/apps/${APP_DIRNAME}
 # RUN echo "Contenu de /app/build/bin après copie :" && ls -la /app/build/bin
 
 # Exposer le bon port pour AdonisJS
-ARG PORT=3333
+ARG PORT=3334
 ENV PORT=${PORT}
 EXPOSE ${PORT}
 
